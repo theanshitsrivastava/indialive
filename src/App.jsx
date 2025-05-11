@@ -135,7 +135,7 @@ function NewsPortal() {
               className="flex items-center"
             >
               <Link to="/">
-                <img alt="India Live News Logo" className="h-12" src="https://images.unsplash.com/photo-1660719551417-5fe82e47d1a2" />
+                <img alt="India Live News Logo" className="h-12" src="src\indialive.png" />
               </Link>
               <h1 className="text-3xl font-bold ml-4">India Live</h1>
             </motion.div>
