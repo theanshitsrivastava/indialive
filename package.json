@@ -8,7 +8,6 @@
     "build": "vite build",
     "preview": "vite preview",
     "generate:sitemap": "node generate-sitemap.js"
-
   },
   "dependencies": {
     "@radix-ui/react-alert-dialog": "^1.0.5",
@@ -29,7 +28,6 @@
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-router-dom": "^6.16.0",
-    "react-router-sitemap": "^1.2.0",
     "sitemap": "^8.0.0",
     "tailwind-merge": "^1.14.0",
     "tailwindcss-animate": "^1.0.7"
