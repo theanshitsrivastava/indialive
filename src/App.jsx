@@ -7,6 +7,7 @@ import { useToast } from "@/components/ui/use-toast";
 import { supabase } from "@/lib/supabase";
 import { Search, Moon, Sun, Settings } from "lucide-react";
 import NewsDetail from "./components/NewsDetail.jsx";
+import logo from './indialive.png';
 
 // Slider Component to cycle images/videos every 10 seconds
 function Slider({ items }) {
@@ -172,7 +173,8 @@ function NewsPortal() {
       <header className="bg-red-800 dark:bg-red-900 text-white py-4 shadow-lg">
         <div className="container mx-auto px-4 flex justify-between items-center">
           <Link to="/" className="flex items-center">
-            <img alt="India Live News Logo" className="h-12" src="src/indialive.png" />
+            {/* <img alt="India Live News Logo" className="h-12" src="src/indialive.png" /> */}
+            <img src={logo} className="h-12" alt="India Live" />
             <h1 className="text-3xl font-bold ml-4">India Live</h1>
           </Link>
 
