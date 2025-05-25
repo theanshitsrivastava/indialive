@@ -474,81 +474,86 @@ function AdminPanel() {
   const handleNewsUpload = async () => {
     if (!newsTitle || !newsDescription || !newsCategory) {
       toast({
-        title: "Error",
-        description: "Please fill all news fields.",
+        title: "Missing Fields",
+        description: "Please fill all the required fields: Title, Description, and Category.",
         variant: "destructive",
       });
       return;
     }
-
+  
     setNewsUploading(true);
-
     let publicUrl = null;
-
+  
     try {
+      // Step 1: Upload media file if present
       if (newsMediaFile) {
-        // Upload media for news
         const fileExt = newsMediaFile.name.split(".").pop();
         const fileName = `news_${Date.now()}.${fileExt}`;
-
+  
         const { error: uploadError } = await supabase.storage
           .from("news-media")
           .upload(fileName, newsMediaFile, {
-            cacheControl: "3600",
-            upsert: false,
             contentType: newsMediaFile.type,
           });
-
-        if (uploadError) throw uploadError;
-
-        const { data: publicUrlData } = supabase.storage
+  
+        if (uploadError) {
+          throw new Error(`File upload failed: ${uploadError.message}`);
+        }
+  
+        // Step 2: Get public URL
+        const { data: urlData, error: urlError } = supabase.storage
           .from("news-media")
           .getPublicUrl(fileName);
-
-        if (!publicUrlData || !publicUrlData.publicUrl) {
-          throw new Error("Failed to get public URL");
+  
+        if (urlError || !urlData?.publicUrl) {
+          throw new Error("Failed to get public URL.");
         }
-
-        publicUrl = publicUrlData.publicUrl;
+  
+        publicUrl = urlData.publicUrl;
       }
-
-      // Insert news record into DB
+  
+      // Step 3: Insert news into database (REMOVE view, likes if not in schema)
       const { error: insertError } = await supabase.from("news").insert([
         {
           title: newsTitle,
           description: newsDescription,
           category: newsCategory,
           image_url: publicUrl,
-          view: 0,
-          likes: 0,
           created_at: new Date().toISOString(),
         },
       ]);
-
-      if (insertError) throw insertError;
-
+  
+      if (insertError) {
+        throw new Error(`Database insert failed: ${insertError.message}`);
+      }
+  
       toast({
         title: "Success",
         description: "News uploaded successfully.",
       });
-
-      // Clear inputs
+  
+      // Reset fields
       setNewsTitle("");
       setNewsDescription("");
       setNewsCategory("");
       setNewsMediaFile(null);
-
-      fetchNewsItems();
+  
+      fetchNewsItems(); // Reload list
     } catch (error) {
+      console.error("Upload Error:", error);
       toast({
-        title: "Error",
-        description: error.message || "Upload failed",
+        title: "Upload Failed",
+        description: error.message || "An unknown error occurred during upload.",
         variant: "destructive",
       });
     }
-
+  
     setNewsUploading(false);
   };
+  
+  
+
+
 
   // Delete slider item
   const handleDeleteSlider = async (id, fileUrl) => {
@@ -699,6 +704,7 @@ function AdminPanel() {
         <h3 className="text-2xl font-semibold mb-4 text-gray-900 dark:text-white">
           Upload News Content
         </h3>
+
         <div className="space-y-4 max-w-xl">
           <input
             type="text"
@@ -721,12 +727,27 @@ function AdminPanel() {
             onChange={(e) => setNewsCategory(e.target.value)}
             className="w-full px-4 py-2 rounded border dark:bg-gray-700 dark:text-white dark:border-gray-600"
           />
-          <input
-            type="file"
-            accept="image/*,video/*"
-            onChange={handleNewsMediaChange}
-          />
-          <Button onClick={handleNewsUpload} disabled={newsUploading}>
+
+          {/* File upload input with preview filename */}
+          <div className="flex flex-col space-y-1">
+            <input
+              type="file"
+              accept="image/*,video/*"
+              onChange={handleNewsMediaChange}
+              className="text-sm text-gray-700 dark:text-gray-300"
+            />
+            {newsMediaFile && (
+              <span className="text-sm text-green-600 dark:text-green-400">
+                Selected file: {newsMediaFile.name}
+              </span>
+            )}
+          </div>
+
+          <Button
+            onClick={handleNewsUpload}
+            disabled={newsUploading}
+            className="w-full md:w-auto"
+          >
             {newsUploading ? "Uploading News..." : "Upload News"}
           </Button>
         </div>
@@ -787,6 +808,7 @@ function AdminPanel() {
           </div>
         )}
       </section>
+
     </div>
   );
 }
