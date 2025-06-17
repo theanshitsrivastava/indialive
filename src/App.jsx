@@ -7,6 +7,7 @@ import { useToast } from "@/components/ui/use-toast";
 import { supabase } from "@/lib/supabase";
 import { Search, Moon, Sun, Settings } from "lucide-react";
 import NewsDetail from "./components/NewsDetail.jsx";
+import NewsSection from "./components/NewsSection.jsx";
 import logo from './indialive.png';
 
 // Slider Component to cycle images/videos every 10 seconds
@@ -197,10 +198,6 @@ function NewsPortal() {
         </div>
       </header>
 
-      {/* Slider */}
-      <div className="container mx-auto px-4 mt-4">
-        <Slider items={sliderItems} />
-      </div>
 
       {/* Search and Filter */}
       <div className="bg-white dark:bg-gray-800 py-4 shadow-md mt-4">
@@ -233,57 +230,98 @@ function NewsPortal() {
         </div>
       </div>
 
-      {/* News List */}
-      <main className="container mx-auto px-4 py-8">
-        {loading ? (
-          <div className="flex justify-center items-center h-64">
-            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-red-800"></div>
-          </div>
-        ) : (
-          <div className="flex flex-col gap-6">
-            {filteredNews.map((news) => (
-              <motion.article
-                key={news.id}
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.4 }}
-                className="bg-white dark:bg-gray-800 rounded-xl shadow hover:shadow-lg overflow-hidden flex flex-col md:flex-row transition-all duration-300"
-              >
-                {/* Image */}
-                <Link to={`/news/${news.id}`} className="w-full md:w-1/3 block">
-                  <img
-                    alt={news.title}
-                    src={news.image_url}
-                    className="w-full h-52 object-cover"
-                  />
-                </Link>
+      <div >
+        <main className="flex-1">Your main content</main>
+        <aside >Aside content</aside>
+        <Slider items={sliderItems} />
+      </div>
 
-                {/* Content */}
-                <div className="p-6 flex flex-col justify-between flex-1">
-                  <div>
-                    <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-2">
-                      {news.title}
-                    </h2>
-                    <p className="text-gray-700 dark:text-gray-300 mb-4 line-clamp-3">
-                      {news.description}
-                    </p>
-                  </div>
 
-                  <div className="flex justify-between items-center text-gray-500 dark:text-gray-400 text-sm">
-                    <span>{new Date(news.created_at).toLocaleDateString()}</span>
-                    <span>Likes: {news.likes || 0}</span>
+
+      <div className="flex flex-col lg:flex-row">
+        <div className="lg:hidden space-y-6">
+          {/* <div className="w-full mb-6">
+            {/* <Slider /> */}
+        </div> */}
+
+        {/* News List */}
+        <main className="container mx-auto px-4 py-8 flex-1">
+          {loading ? (
+            <div className="flex justify-center items-center h-64">
+              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-red-800"></div>
+            </div>
+          ) : (
+            <div className="flex flex-col gap-6">
+              {filteredNews.map((news) => (
+                <motion.article
+                  key={news.id}
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.4 }}
+                  className="bg-white dark:bg-gray-800 rounded-xl shadow hover:shadow-lg overflow-hidden flex flex-col md:flex-row transition-all duration-300"
+                >
+                  {/* Image */}
+                  <Link to={`/news/${news.id}`} className="w-full md:w-1/3 block">
+                    <img
+                      alt={news.title}
+                      src={news.image_url}
+                      className="w-full h-52 object-cover"
+                    />
+                  </Link>
+
+                  {/* Content */}
+                  <div className="p-6 flex flex-col justify-between flex-1">
+                    <div>
+                      <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-2">
+                        {news.title}
+                      </h2>
+                      <p className="text-gray-700 dark:text-gray-300 mb-4 line-clamp-3">
+                        {news.description}
+                      </p>
+                    </div>
+
+                    <div className="flex justify-between items-center text-gray-500 dark:text-gray-400 text-sm mb-4">
+                      <span>{new Date(news.created_at).toLocaleDateString()}</span>
+                      <span>Likes: {news.likes || 0}</span>
+                    </div>
+
+                    {/* Share Button */}
+                    <button
+                      onClick={() => {
+                        if (navigator.share) {
+                          navigator.share({
+                            title: news.title,
+                            text: news.description,
+                            url: window.location.origin + `/news/${news.id}`,
+                          });
+                        } else {
+                          alert("Sharing is not supported on this browser.");
+                        }
+                      }}
+                      className="inline-flex items-center px-3 py-1.5 bg-red-600 text-white text-sm rounded hover:bg-red-700 transition"
+                    >
+                      Share
+                    </button>
                   </div>
-                </div>
-              </motion.article>
-            ))}
-            {filteredNews.length === 0 && (
-              <p className="text-center text-gray-600 dark:text-gray-400">
-                No news found.
-              </p>
-            )}
-          </div>
-        )}
-      </main>
+                </motion.article>
+              ))}
+              {filteredNews.length === 0 && (
+                <p className="text-center text-gray-600 dark:text-gray-400">No news found.</p>
+              )}
+            </div>
+          )}
+        </main>
+
+        <aside className="w-full lg:w-[30%] space-y-8">
+          {/* As per image, desktop sidebar has text-only "ताजा समाचार" */}
+
+          <NewsSection />
+          hello
+          {/* Could add more sections like "सर्वाधिक लोकप्रिय" here if data was available */}
+        </aside>
+      </div>
+
+
 
       {/* Newsletter Subscription */}
       <footer className="bg-red-800 dark:bg-red-900 text-white py-6 mt-12">
@@ -480,38 +518,38 @@ function AdminPanel() {
       });
       return;
     }
-  
+
     setNewsUploading(true);
     let publicUrl = null;
-  
+
     try {
       // Step 1: Upload media file if present
       if (newsMediaFile) {
         const fileExt = newsMediaFile.name.split(".").pop();
         const fileName = `news_${Date.now()}.${fileExt}`;
-  
+
         const { error: uploadError } = await supabase.storage
           .from("news-media")
           .upload(fileName, newsMediaFile, {
             contentType: newsMediaFile.type,
           });
-  
+
         if (uploadError) {
           throw new Error(`File upload failed: ${uploadError.message}`);
         }
-  
+
         // Step 2: Get public URL
         const { data: urlData, error: urlError } = supabase.storage
           .from("news-media")
           .getPublicUrl(fileName);
-  
+
         if (urlError || !urlData?.publicUrl) {
           throw new Error("Failed to get public URL.");
         }
-  
+
         publicUrl = urlData.publicUrl;
       }
-  
+
       // Step 3: Insert news into database (REMOVE view, likes if not in schema)
       const { error: insertError } = await supabase.from("news").insert([
         {
@@ -522,22 +560,22 @@ function AdminPanel() {
           created_at: new Date().toISOString(),
         },
       ]);
-  
+
       if (insertError) {
         throw new Error(`Database insert failed: ${insertError.message}`);
       }
-  
+
       toast({
         title: "Success",
         description: "News uploaded successfully.",
       });
-  
+
       // Reset fields
       setNewsTitle("");
       setNewsDescription("");
       setNewsCategory("");
       setNewsMediaFile(null);
-  
+
       fetchNewsItems(); // Reload list
     } catch (error) {
       console.error("Upload Error:", error);
@@ -547,11 +585,11 @@ function AdminPanel() {
         variant: "destructive",
       });
     }
-  
+
     setNewsUploading(false);
   };
-  
-  
+
+
 
 
 
