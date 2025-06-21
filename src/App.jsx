@@ -251,14 +251,17 @@ function NewsPortal() {
               variant="outline"
               className="flex items-center gap-1"
               onClick={() => {
+                // Use your custom domain for sharing
+                const domain = "https://www.indialivenews.com"; // <-- Replace with your actual domain
+                const shareUrl = domain;
                 if (navigator.share) {
                   navigator.share({
                     title: "India Live News",
                     text: "Check out the latest news on India Live!",
-                    url: window.location.origin,
+                    url: shareUrl,
                   });
                 } else {
-                  navigator.clipboard.writeText(window.location.origin);
+                  navigator.clipboard.writeText(shareUrl);
                   alert("Link copied to clipboard!");
                 }
               }}
